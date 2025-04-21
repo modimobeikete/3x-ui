@@ -1,4 +1,21 @@
 services:
+  tailscale:
+    image: tailscale/tailscale:stable  # 使用stable标签，每次部署或重新启动容器时，都将使用最新的稳定版（官方建议的）
+    container_name: tailscale
+    network_mode: host   # 使用host模式
+    privileged: true     # 特权模式
+    environment:
+      TS_AUTHKEY: tskey-auth-kis5pphFwX11CNTRL-R2DERSkSnNWAFRwdiT76PW7PLag8mphqD  #获取方法：TS管理页面 → Settings → Keys → Generate auth key，创建好了复制过来
+      TS_STATE_DIR: /var/lib/tailscale  # 状态目录, 作用是容器重新启动后配置不变
+      TS_HOSTNAME: usvmiss
+      TS_EXTRA_ARGS: --accept-routes --advertise-exit-node
+    volumes:
+      - /vol1/1000/docker/tailscale/state:/var/lib/tailscale # 映射状态目录, 冒号左边路径可自定义
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - net_admin
+    restart: always
   3x-ui:
     image: ghcr.io/mhsanaei/3x-ui:latest
     container_name: 3x-ui
